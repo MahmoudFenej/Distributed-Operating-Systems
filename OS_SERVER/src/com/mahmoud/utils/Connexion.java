@@ -21,14 +21,40 @@ public class Connexion extends Thread {
 			BufferedReader istream = new BufferedReader(reader);
 			PrintWriter ostream = new PrintWriter(socket.getOutputStream());
 			while (true) {
-				// Reading from client
+
+				String menu = "1-counting phrase lenght 2-number factorial 3-number Power ";
+				ostream.println(menu);
+				ostream.flush();
+
 				String input = istream.readLine();
 				System.out.println("Connection class has received: " + input);
 				
-				IOperation operation = OperationFactory.getOperation(input);
-				int opResult = operation.executeOperation();
-				// echo line to the server
-				ostream.println(opResult);
+				int result = 0;
+				
+				int option = Integer.parseInt(input);
+				if (option == 1) {
+					ostream.println("Enter String: ");
+					ostream.flush();
+					String phrase = istream.readLine();
+					result = new CountingLengthOperation(phrase).executeOperation();
+				}
+				if (option == 2) {
+					ostream.println("Enter number: ");
+					ostream.flush();
+					String line = istream.readLine();
+					result = new NumberFactorialOperation(line).executeOperation();
+				}
+				if (option == 3) {
+					ostream.println("Enter 2 number separated by :");
+					ostream.flush();
+					String line = istream.readLine();
+					String [] res = line.split(":");
+					String number = res[0];
+					int power = Integer.parseInt(res[1]);
+					result = new NumberPowerOperation(number, power).executeOperation();
+				}
+
+				ostream.println(result);
 				ostream.flush();
 			}
 		} catch (Exception e) {
